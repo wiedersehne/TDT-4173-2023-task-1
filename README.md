@@ -1,6 +1,6 @@
 # TDT4172-2023-task-1
 
-This repository contains all resources for Homework 1 of TDT4173 fall 2022.
+This repository contains all resources for Homework 1 of TDT4173 fall 2023.
 
 ## Problem Description
 
