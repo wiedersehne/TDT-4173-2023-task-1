@@ -30,7 +30,7 @@ In this assignment you will be developing well-known and simple (but occasionall
 
 ### Submission and Evaluation
 - Submit your report and code to Blackboard.
-  - The code should be a zip file and only contain (your modified versions of) the files currently present in this repository (i.e. no pip packages etc.).
+  - The code should be a zip file named with "studentid_name" and only contain (your modified versions of) the files currently present in this repository (i.e. no pip packages etc.).
 - The submissions are individual
   - We encourage you to work with and discuss the project with your fellow students, but at the end of the day, you will write your own code and report.
 - The deadline for submission is September 17th.
