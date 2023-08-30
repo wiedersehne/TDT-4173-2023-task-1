@@ -6,10 +6,12 @@ import pandas as pd
 
 class KMeans:
     
-    def __init__():
+    def __init__(self, k = 2):
         # NOTE: Feel free add any hyperparameters 
         # (with defaults) as you see fit
-        pass
+        self.k = k
+        self.centroids = None
+        self.maxIt = 200
         
     def fit(self, X):
         """
@@ -20,7 +22,25 @@ class KMeans:
                 m rows (#samples) and n columns (#features)
         """
         # TODO: Implement
-        raise NotImplemented()
+
+        '''
+        Construct k amount of centroids where the first centroids are some of the points already given in the dataset X. 
+        Using numpy to choose k amount of random different data points. Got some help from chatGPT.
+        '''
+
+        self.centroids = np.random.choice(X.shape[0], size = self.k, replace = False)
+
+        #Iterate through the given attempts to find better centroids
+
+        for it in range(self.maxIt + 1):
+            pass
+
+
+
+
+
+
+       # raise NotImplemented()
     
     def predict(self, X):
         """
