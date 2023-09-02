@@ -12,6 +12,21 @@ class KMeans:
         self.k = k
         self.centroids = None
         self.maxIt = 200
+
+    def init_centroids(self, X: pd.DataFrame):
+        #Select a random centroid
+        centroids = np.array(X.sample().to_numpy())
+        X = np.array(X.to_numpy())
+        while len(centroids) < self.k:
+            #Find distance between all points and centroids
+            distances = np.array(cross_euclidean_distance(X, centroids))
+            #Find distance from point to its centroid
+            distance_to_nearest = distances.min(axis=1)
+            #Find the point furthest away from its centriod
+            max_index_row = np.argmax(distance_to_nearest)
+            #Add as new centroid
+            centroids = np.append(centroids, [X[max_index_row]], axis=0)
+        return centroids
         
     def fit(self, X):
         """
@@ -28,19 +43,25 @@ class KMeans:
         Using numpy to choose k amount of random different data points. Got some help from chatGPT.
         '''
 
-        self.centroids = np.random.choice(X.shape[0], size = self.k, replace = False)
+        print('here')
 
-        #Iterate through the given attempts to find better centroids
+        #Random selection of the first centroids 
+        #self.centroids = random_init(X, self.k)
 
-        for it in range(self.maxIt + 1):
-            pass
+        self.centroids = self.init_centroids(X)
 
+        for iteration in range(self.maxIt):
+            distances = cross_euclidean_distance(X, self.centroids)  # Calculate distances between the given data and centroids
+            assigned_points = np.argmin(distances, axis=1) #Assigning a cluster to each given data point by the closest distance
 
+        #Creating new centroids in the positional mean of each cluster by using list comprehension
+            new_centroids = [X[assigned_points == temp].mean(axis=0) for temp in range(self.k)]
 
+        #Convolution check for the centroids
+            if np.all(new_centroids == self.centroids):
+                break
 
-
-
-       # raise NotImplemented()
+            self.centroids = new_centroids
     
     def predict(self, X):
         """
@@ -59,7 +80,11 @@ class KMeans:
             could be: array([2, 0, 0, 1, 2, 1, 1, 0, 2, 2])
         """
         # TODO: Implement 
-        raise NotImplemented()
+
+    #Calculate the distances between the given data points and the ultimate centroids after fit()
+        distances = cross_euclidean_distance(X, self.centroids)
+    #Return the assigned centroid for each data point in the format [ cluster k, k-3, k-1 ,...., k] the size is determined by size(X)
+        return np.argmin(distances, axis=1)
     
     def get_centroids(self):
         """
@@ -76,7 +101,9 @@ class KMeans:
             [xm_1, xm_2, ..., xm_n]
         ])
         """
-        pass
+
+    #Return the centroids of a given Kmeans class
+        return self.centroids
     
     
     
@@ -174,4 +201,13 @@ def euclidean_silhouette(X, z):
     b = (D + inf_mask).min(axis=1)
     
     return np.mean((b - a) / np.maximum(a, b))
+
+#To find a random point in the given data set X to initialise the first centroids
+def random_init(X, k):
+        n_samples, _ = X.shape
+        # Randomly select k unique indices from the data points
+        centroid_indices = np.random.choice(n_samples, size=k, replace=False)
+        # Use the selected indices to extract the corresponding data points as centroids
+        centroids = X.loc[centroid_indices]
+        return centroids
   
