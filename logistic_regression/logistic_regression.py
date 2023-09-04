@@ -3,6 +3,7 @@ import pandas as pd
 # IMPORTANT: DO NOT USE ANY OTHER 3RD PARTY PACKAGES
 # (math, random, collections, functools, etc. are perfectly fine)
 # Making an extra comment
+# Making an extra comment in log_reg branch
 
 
 class LogisticRegression:
