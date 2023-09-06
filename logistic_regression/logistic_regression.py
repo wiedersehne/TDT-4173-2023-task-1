@@ -8,7 +8,7 @@ import pandas as pd
 
 class LogisticRegression:
     
-    def __init__():
+    def __init__(self):
         # NOTE: Feel free add any hyperparameters 
         # (with defaults) as you see fit
         pass
@@ -23,8 +23,31 @@ class LogisticRegression:
             y (array<m>): a vector of floats containing 
                 m binary 0.0/1.0 labels
         """
-        # TODO: Implement
-        raise NotImplemented()
+        #initialize paramaters
+        n_samples, n_features = X.shape
+        self.W = np.random.randn(n_features)
+        self.B = np.random.randn(1)
+
+
+        #Performs 100 iterations of gradient descent
+        for i in range(10000):
+            learning_rate = 1
+            Z = np.dot(X, self.W) + self.B
+            A = sigmoid(Z)
+            cost = -(1/n_samples)*np.sum(y*np.log(A) + (1-y)*np.log(1-A))
+
+            dW = (1/n_samples) * np.dot(X.T, (A - y)) 
+            dB = (1/n_samples) * np.sum(A - y)
+
+            self.W = self.W - learning_rate * dW
+            self.B = self.B - learning_rate * dB
+
+            if (i%1000 == 0):
+                print(f"cost after {i} iterations of gradient descent is: {cost}")
+            
+
+        return
+
     
     def predict(self, X):
         """
@@ -40,9 +63,10 @@ class LogisticRegression:
             A length m array of floats in the range [0, 1]
             with probability-like predictions
         """
-        # TODO: Implement
-        raise NotImplemented()
-        
+        z = np.dot(X, self.W) + self.B
+        a = sigmoid(z)
+        return a
+   
 
         
 # --- Some utility functions 
