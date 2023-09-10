@@ -11,69 +11,53 @@ class KMeans:
         # (with defaults) as you see fit
         self.k = k
         self.centroids = None
-        self.maxIt = 500
+        self.maxIt = 200
 
     def init_centroids(self, X: pd.DataFrame):
-        #Select a random centroid from the given data set X
-        centroids = np.array(X.sample().to_numpy())   
-
-        # make X into a numpy array
+        #Select a random centroid
+        centroids = np.array(X.sample().to_numpy())
         X = np.array(X.to_numpy())
-
-        #While the amount of centroids is less than the given k, this assigns a new centroid according to the furthest distance from the previous centroids
         while len(centroids) < self.k:
             #Find distance between all points and centroids
             distances = np.array(cross_euclidean_distance(X, centroids))
-
-            #Find distance from point to its centroid, by finding the minimum distance of the centroids  
+            #Find distance from point to its centroid
             distance_to_nearest = distances.min(axis=1)
-
-            #Find the point furthest away from its centroid, in order to add it as a new centroid
+            #Find the point furthest away from its centriod
             max_index_row = np.argmax(distance_to_nearest)
-
             #Add as new centroid
-            centroids = np.append(centroids, [X[max_index_row]], axis=0) 
-
+            centroids = np.append(centroids, [X[max_index_row]], axis=0)
         return centroids
-    
         
     def fit(self, X: pd.DataFrame):
         """
         Estimates parameters for the classifier
-            
+        
         Args:
             X (array<m,n>): a matrix of floats with
                 m rows (#samples) and n columns (#features)
         """
         # TODO: Implement 
 
-        #Initialise the centroids and choose the one with the lowest distortion score
-        best_centroids = None
+        '''
+        Construct k amount of centroids where the first centroids are some of the points already given in the dataset X. 
+        Using numpy to choose k amount of random different data points. Got some help from chatGPT.
+        '''
+
+        print(X)
+
+        #Random selection of the first centroids 
+        #self.centroids = random_init(X, self.k)
+
         self.centroids = self.init_centroids(X)
-        distortion_score = euclidean_distortion(X, self.predict(X))
-
-        for _ in range(15):
-            new_centroids = self.init_centroids(X)
-            self.centroids = new_centroids  
-            new_distortion_score = euclidean_distortion(X, self.predict(X))
-            if new_distortion_score < distortion_score:
-                distortion_score = new_distortion_score
-                best_centroids = new_centroids
-
-        #Assign the best centroids to the class 
-        self.centroids = best_centroids
-
-        # make X into a numpy array
-        X = np.array(X.to_numpy())
 
         for iteration in range(self.maxIt):
             distances = cross_euclidean_distance(X, self.centroids)  # Calculate distances between the given data and centroids
             assigned_points = np.argmin(distances, axis=1) #Assigning a cluster to each given data point by the closest distance
 
-            # Creating new centroids in the positional mean of each cluster by using list comprehension
-            new_centroids = np.array([X[assigned_points == temp].mean(axis=0) for temp in range(self.k)])
+        #Creating new centroids in the positional mean of each cluster by using list comprehension
+            new_centroids = [X[assigned_points == temp].mean(axis=0) for temp in range(self.k)]
 
-            # Convolution check for the centroids
+        #Convolution check for the centroids
             if np.all(new_centroids == self.centroids):
                 break
 
@@ -97,8 +81,6 @@ class KMeans:
         """
         # TODO: Implement 
 
-    # make X into a numpy array 
-        X = np.array(X.to_numpy())
     #Calculate the distances between the given data points and the ultimate centroids after fit()
         distances = cross_euclidean_distance(X, self.centroids)
     #Return the assigned centroid for each data point in the format [ cluster k, k-3, k-1 ,...., k] the size is determined by size(X)
@@ -155,7 +137,7 @@ def cross_euclidean_distance(x, y=None):
     return euclidean_distance(x[..., :, None, :], y[..., None, :, :])
 
 
-def euclidean_distortion(X: pd.DataFrame, z):
+def euclidean_distortion(X, z):
     """
     Computes the Euclidean K-means distortion
     
@@ -167,7 +149,6 @@ def euclidean_distortion(X: pd.DataFrame, z):
         A scalar float with the raw distortion measure 
     """
     X, z = np.asarray(X), np.asarray(z)
-
     assert len(X.shape) == 2
     assert len(z.shape) == 1
     assert X.shape[0] == z.shape[0]
@@ -177,7 +158,7 @@ def euclidean_distortion(X: pd.DataFrame, z):
     for i, c in enumerate(clusters):
         Xc = X[z == c]
         mu = Xc.mean(axis=0)
-        distortion += ((Xc - mu) ** 2).sum()
+        distortion += ((Xc - mu) ** 2).sum(axis=1)
         
     return distortion
 
